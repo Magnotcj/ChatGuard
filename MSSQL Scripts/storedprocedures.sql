@@ -1,6 +1,6 @@
 CREATE OR ALTER PROCEDURE [getPassHash]
 (
-    @Username varchar(20)
+    @Username varchar(50)
 )
 AS
 BEGIN
@@ -9,27 +9,22 @@ BEGIN
         Print 'Username cannot be null or empty.';
         RETURN(1)
     END
-    if @PasswordHash is null or @PasswordHash = ''
-    BEGIN
-        Print 'PasswordHash cannot be null or empty.';
-        RETURN(2)
-    END
     if not exists (SELECT * FROM [User] WHERE Username = @Username)
     BEGIN  
         PRINT 'ERROR: User does not exist.';
-        RETURN(3)
+        RETURN(2)
     END
 
-	SELECT *
-	FROM [User]
-	WHERE Username = @Username
+	SELECT password
+	FROM PERSON
+	WHERE username = @Username
     
     RETURN(0)
 END
 
 CREATE OR ALTER PROCEDURE [createUser](
-	@Username varchar(20),
-	@PasswordHash varchar(20)
+	@Username varchar(50),
+	@PasswordHash varchar(255)
 )
 AS
 Begin
@@ -49,44 +44,82 @@ Begin
 	    RETURN(3)
 	END
 
-	INSERT INTO [User](Username, PasswordHash)
+	INSERT INTO Person(username, password)
 	VALUES (@Username, @PasswordHash)
 
 	RETURN(0)
 End
 
 CREATE OR ALTER PROCEDURE [getMessages](
-	@chatId int
+	@chat_id int
 )
 AS
 Begin
-	if @chatId is null
+	if @chat_id is null
 	BEGIN
-		Print 'Username cannot be null';
+		Print 'char_id cannot be null';
 		RETURN (1)
 	END
 
-	SELECT messages
-    FROM Chat
-    WHERE chatId = @chatId
+	SELECT msg.text, msg.time, p.username
+    FROM Chat as ch join chatcontainsmessage as ccm on ch.chat_id = ccm.chat_id
+		join MESSAGE as msg on ccm.message_id = msg.id
+		join usersentmessage as usm on usm.message_id = msg.id
+		join PERSON as p on usm.user_username = person.username
+    WHERE ch.chat_id = @chat_id
 
 	RETURN(0)
 End
 
 CREATE OR ALTER PROCEDURE [getChats](
-	@userId int
+	@username VARCHAR(50)
 )
 AS
 Begin
-	if @userId is null
+	if @username is null
 	BEGIN
-		Print 'User ID cannot be null';
+		Print 'username cannot be null';
 		RETURN (1)
 	END
 
 	SELECT chats
-    FROM User
-    WHERE userId = @userId
+    FROM PERSON user_p join userpartofchat as user_upc on user_p.username = user_upc.user_username
+		join CHAT as ch on user_upc.chat_id = ch.id
+		join userpartofchat as other_upc on ch.id = other_upc.chat_id
+		join PERSON as other_p on other_upc.user_username = other_p.username
+    WHERE user_p.username = @username
+
+	RETURN(0)
+End
+
+CREATE OR ALTER PROCEDURE [createChatPost](
+	@username varchar(50),
+	@chat_id int,
+	@text varchar(255)
+)
+AS
+Begin
+	if not exists (SELECT * FROM PERSON WHERE username = @username)
+	BEGIN
+        PRINT 'User with username does not exist.';
+	    RETURN(1)
+	END
+	if not exists (SELECT * FROM CHAT WHERE id = @chat_id)
+	BEGIN
+        PRINT 'Chat with chat_id does not exist.';
+	    RETURN(2)
+	END
+	if @text is null or @text = ''
+	BEGIN
+		Print 'text cannot be null or empty.';
+		RETURN (3)
+	END
+
+	INSERT INTO MESSAGE(text, time)
+	VALUES (@text, GETDATE())
+
+	INSERT INTO chatcontainsmessage(message_id, chat_id)
+	VALUES (@@IDENTITY, @chat_id)
 
 	RETURN(0)
 End
