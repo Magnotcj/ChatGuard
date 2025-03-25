@@ -1,4 +1,5 @@
 import sql from "mssql"; 
+import bcrypt from "bcrypt";
 
 const config = {
   user: "your_db_user",
@@ -36,4 +37,28 @@ async function addMessage(chatId, userId, content) {
     .execute("sp_AddMessage"); 
 }
 
-export default { getChatsForUser, getMessages, addMessage };
+async function createUser(username, password) {
+  bcrypt.hash(password, 10).then(async function(hash) {
+    const pool = await sql.connect(config);
+    const result = await pool.request()
+      .input("Username", sql.NVarchar, username)
+      .input("PasswordHash", sql.NVarChar, hash)
+      .execute("sp_CreateUser");
+    return result; // TODO: return if creation was successful
+  });
+}
+
+async function login(username, password) {
+  const pool = await sql.connect(config);
+  const result = await pool.request()
+    .input("Username", sql.NVarchar, username)
+    .input("PasswordHash", sql.NVarChar, hash)
+    .execute("sp_CreateUser");
+  const hash = result.resultSet; // TODO: find how to get hash value
+  
+  bcrypt.compare(password, hash).then(function(result)) {
+    return result;
+  }
+}
+
+export default { getChatsForUser, getMessages, addMessage, createUser, login };
