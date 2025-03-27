@@ -1,8 +1,8 @@
 import sql from "mssql"; 
 
 const config = {
-  user: "un",
-  password: "pw",
+  user: "USERNAME",
+  password: "PASS",
   server: "490chatguard.csse.rose-hulman.edu",
   database: "490chatguard",
   options: {
@@ -11,7 +11,7 @@ const config = {
   }
 };
 
-async function getChatsForUser(username) {
+export async function getChatsForUser(username) {
   const pool = await sql.connect(config);
   const result = await pool.request()
     .input("username", sql.VarChar(50), username)
@@ -19,7 +19,7 @@ async function getChatsForUser(username) {
   return result.recordset;
 }
 
-async function getMessages(chatId) {
+export async function getMessages(chatId) {
   const pool = await sql.connect(config);
   const result = await pool.request()
     .input("ChatId", sql.Int, chatId)
@@ -27,7 +27,7 @@ async function getMessages(chatId) {
   return result.recordset;
 }
 
-async function addMessage(chatId, username, content) {
+export async function addMessage(chatId, username, content) {
   const pool = await sql.connect(config);
   await pool.request()
     .input("ChatId", sql.Int, chatId)
@@ -36,7 +36,7 @@ async function addMessage(chatId, username, content) {
     .execute("createChatPost"); 
 }
 
-async function createUser(username, password) {
+export async function createUser(username, password) {
   const pool = await sql.connect(config);
   const result = await pool.request()
       .input("username", sql.VarChar(50), username)
@@ -45,15 +45,13 @@ async function createUser(username, password) {
     return result; // TODO: return if creation was successful
 }
 
-async function getHashedPassword(username) {
+export async function getHashedPassword(username) {
   const pool = await sql.connect(config);
   const result = await pool.request()
-    .input("Username", sql.NVarchar(50), username)
+    .input("Username", sql.VarChar(50), username)
     .execute("getPassHash");
 
   const hashedPassword = result.recordset[0]?.password; 
   
   return hashedPassword;
 }
-
-export default { getChatsForUser, getMessages, addMessage, createUser, getHashedPassword };
