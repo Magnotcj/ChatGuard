@@ -1,3 +1,4 @@
+
 CREATE OR ALTER PROCEDURE [getPassHash]
 (
     @Username varchar(50)
@@ -62,11 +63,11 @@ Begin
 	END
 
 	SELECT msg.text, msg.time, p.username
-    FROM Chat as ch join chatcontainsmessage as ccm on ch.chat_id = ccm.chat_id
+    FROM Chat as ch join chatcontainsmessage as ccm on ch.id = ccm.chat_id
 		join MESSAGE as msg on ccm.message_id = msg.id
 		join usersentmessage as usm on usm.message_id = msg.id
-		join PERSON as p on usm.user_username = person.username
-    WHERE ch.chat_id = @chat_id
+		join PERSON as p on usm.user_username = p.username
+    WHERE ch.id = @chat_id
 
 	RETURN(0)
 End
@@ -82,7 +83,7 @@ Begin
 		RETURN (1)
 	END
 
-	SELECT chats
+	SELECT *
     FROM PERSON user_p join userpartofchat as user_upc on user_p.username = user_upc.user_username
 		join CHAT as ch on user_upc.chat_id = ch.id
 		join userpartofchat as other_upc on ch.id = other_upc.chat_id

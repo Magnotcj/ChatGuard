@@ -1,8 +1,8 @@
 import sql from "mssql"; 
 
 const config = {
-  user: "brookse1",
-  password: "Chat-guard22",
+  user: "un",
+  password: "pw",
   server: "490chatguard.csse.rose-hulman.edu",
   database: "490chatguard",
   options: {
