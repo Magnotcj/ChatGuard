@@ -1,22 +1,21 @@
 import sql from "mssql"; 
-import bcrypt from "bcrypt";
 
 const config = {
-  user: "your_db_user",
-  password: "your_db_password",
-  server: "your_server",
-  database: "your_database",
+  user: "brookse1",
+  password: "Chat-guard22",
+  server: "490chatguard.csse.rose-hulman.edu",
+  database: "490chatguard",
   options: {
     encrypt: true, // Needed for some Azure SQL connections
     trustServerCertificate: true,
   }
 };
 
-async function getChatsForUser(userId) {
+async function getChatsForUser(username) {
   const pool = await sql.connect(config);
   const result = await pool.request()
-    .input("UserId", sql.Int, userId)
-    .execute("sp_GetChatsForUser"); 
+    .input("username", sql.VarChar(50), username)
+    .execute("getChats"); 
   return result.recordset;
 }
 
@@ -24,41 +23,39 @@ async function getMessages(chatId) {
   const pool = await sql.connect(config);
   const result = await pool.request()
     .input("ChatId", sql.Int, chatId)
-    .execute("sp_GetMessages"); 
+    .execute("getMessages"); 
   return result.recordset;
 }
 
-async function addMessage(chatId, userId, content) {
+async function addMessage(chatId, username, content) {
   const pool = await sql.connect(config);
   await pool.request()
     .input("ChatId", sql.Int, chatId)
-    .input("UserId", sql.Int, userId)
+    .input("username", sql.VarChar(50), username)
     .input("Content", sql.NVarChar, content)
-    .execute("sp_AddMessage"); 
+    .execute("createChatPost"); 
 }
 
 async function createUser(username, password) {
   bcrypt.hash(password, 10).then(async function(hash) {
     const pool = await sql.connect(config);
     const result = await pool.request()
-      .input("Username", sql.NVarchar, username)
+      .input("username", sql.VarChar(50), username)
       .input("PasswordHash", sql.NVarChar, hash)
-      .execute("sp_CreateUser");
+      .execute("createUser");
     return result; // TODO: return if creation was successful
   });
 }
 
-async function login(username, password) {
+async function getHashedPassword(username) {
   const pool = await sql.connect(config);
   const result = await pool.request()
-    .input("Username", sql.NVarchar, username)
-    .input("PasswordHash", sql.NVarChar, hash)
-    .execute("sp_CreateUser");
-  const hash = result.resultSet; // TODO: find how to get hash value
+    .input("Username", sql.NVarchar(50), username)
+    .execute("getPassHash");
+
+  const hashedPassword = result.recordset[0]?.password; 
   
-  bcrypt.compare(password, hash).then(function(result)) {
-    return result;
-  }
+  return hashedPassword;
 }
 
-export default { getChatsForUser, getMessages, addMessage, createUser, login };
+export default { getChatsForUser, getMessages, addMessage, createUser, getHashedPassword };
