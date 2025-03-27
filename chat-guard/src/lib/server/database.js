@@ -37,14 +37,12 @@ async function addMessage(chatId, username, content) {
 }
 
 async function createUser(username, password) {
-  bcrypt.hash(password, 10).then(async function(hash) {
-    const pool = await sql.connect(config);
-    const result = await pool.request()
+  const pool = await sql.connect(config);
+  const result = await pool.request()
       .input("username", sql.VarChar(50), username)
-      .input("PasswordHash", sql.NVarChar, hash)
+      .input("PasswordHash", sql.NVarChar, password)
       .execute("createUser");
     return result; // TODO: return if creation was successful
-  });
 }
 
 async function getHashedPassword(username) {
