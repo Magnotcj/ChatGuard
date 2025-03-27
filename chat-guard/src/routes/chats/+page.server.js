@@ -20,5 +20,5 @@ export async function load({ cookies }) {
     });
   }
   
-  return { chats: chats };
+  return { chats };
 }

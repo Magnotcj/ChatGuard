@@ -12,7 +12,7 @@
   <ul>
     {#each chats as chat}
       <li on:click={() => openChat(chat.id)} class="chat-item">
-        {chat.users.join(', ')}
+        {chat.id + ' - ' + chat.users.join(', ')}
       </li>
     {/each}
   </ul>

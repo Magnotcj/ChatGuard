@@ -22,7 +22,7 @@ export async function getChatsForUser(username) {
 export async function getMessages(chatId) {
   const pool = await sql.connect(config);
   const result = await pool.request()
-    .input("ChatId", sql.Int, chatId)
+    .input("chat_id", sql.Int, chatId)
     .execute("getMessages"); 
   return result.recordset;
 }
