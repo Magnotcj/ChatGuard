@@ -1,5 +1,6 @@
 <script>
-    export let chats;
+    export let data;
+    const { chats } = data;
     import { goto } from "$app/navigation";
   
     function openChat(chatId) {
@@ -11,7 +12,7 @@
   <ul>
     {#each chats as chat}
       <li on:click={() => openChat(chat.id)} class="chat-item">
-        {chat.name}
+        {chat.users.join(', ')}
       </li>
     {/each}
   </ul>
