@@ -1,11 +1,16 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { getMessages, addMessage } from "$lib/server/database";
+import { getMessages, addMessage, getChatMembers } from "$lib/server/database";
 
 export async function load({ params }) {
   const chatId = params.chatId;
   const messages = await getMessages(chatId); // Calls stored procedure
+  const membersDb = await getChatMembers(chatId);
+  let members = [];
+  for (let i = 0; i < membersDb.length; i++) {
+    members.push(membersDb[i].user_username);
+  }
   
-  return { chatId, messages };
+  return { chatId, messages, members };
 }
 
 export const actions = {

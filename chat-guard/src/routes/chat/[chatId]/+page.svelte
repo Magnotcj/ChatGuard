@@ -1,12 +1,12 @@
 <script>
   export let data;
-  const { chatId, messages } = data;
+  const { chatId, messages, members } = data;
   import { goto } from "$app/navigation";
 
   let msg = '';
 </script>
 
-<h1>{chatId}</h1>
+<h1>{members.join(', ')}</h1>
 <ul>
   {#each messages as msg}
     <li class="chat-item">

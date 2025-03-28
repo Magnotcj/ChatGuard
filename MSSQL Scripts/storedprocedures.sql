@@ -93,6 +93,24 @@ Begin
 	RETURN(0)
 End
 
+CREATE OR ALTER PROCEDURE [getChatMembers](
+	@chat_id VARCHAR(50)
+)
+AS
+Begin
+	if @chat_id is null
+	BEGIN
+		Print 'chat_id cannot be null';
+		RETURN (1)
+	END
+
+	SELECT user_username
+    FROM userpartofchat
+    WHERE chat_id = @chat_id
+
+	RETURN(0)
+End
+
 CREATE OR ALTER PROCEDURE [createChatPost](
 	@username varchar(50),
 	@chat_id int,

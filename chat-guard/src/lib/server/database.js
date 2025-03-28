@@ -19,6 +19,14 @@ export async function getChatsForUser(username) {
   return result.recordset;
 }
 
+export async function getChatMembers(chatId) {
+  const pool = await sql.connect(config);
+  const result = await pool.request()
+    .input("chat_id", sql.Int, chatId)
+    .execute("getChatMembers"); 
+  return result.recordset;
+}
+
 export async function getMessages(chatId) {
   const pool = await sql.connect(config);
   const result = await pool.request()
