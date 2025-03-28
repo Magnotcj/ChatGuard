@@ -1,4 +1,4 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import { getMessages, addMessage, getChatMembers } from "$lib/server/database";
 
 export async function load({ params }) {

@@ -142,3 +142,35 @@ Begin
 
 	RETURN(0)
 End
+
+CREATE OR ALTER PROCEDURE [createChat]()
+AS
+Begin
+
+	INSERT INTO [CHAT] DEFAULT VALUES
+
+	RETURN(@@IDENTITY)
+End
+
+CREATE OR ALTER PROCEDURE [addChatMember](
+	@username varchar(50),
+	@chat_id int
+)
+AS
+Begin
+	if not exists (SELECT * FROM PERSON WHERE username = @username)
+	BEGIN
+        PRINT 'User with username does not exist.';
+	    RETURN(1)
+	END
+	if not exists (SELECT * FROM CHAT WHERE id = @chat_id)
+	BEGIN
+        PRINT 'Chat with chat_id does not exist.';
+	    RETURN(2)
+	END
+
+	INSERT INTO userpartofchat(chat_id, user_username)
+	VALUES (@chat_id, @username)
+
+	RETURN(0)
+End

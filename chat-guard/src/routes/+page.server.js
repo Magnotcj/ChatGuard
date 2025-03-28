@@ -39,6 +39,9 @@ export const actions = {
     if (!username || !password) {
       return fail(400, { error: 'Username and password are required.' });
     }
+    if (username.split(' ').length > 1) {
+      return fail(400, { error: 'Username cannot have any spaces.' });
+    }
 
     try {
       // Hash the password

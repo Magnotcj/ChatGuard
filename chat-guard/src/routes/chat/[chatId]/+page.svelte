@@ -3,10 +3,10 @@
   const { chatId, messages, members } = data;
   import { goto } from "$app/navigation";
 
-  let msg = '';
+  let msg = "";
 </script>
 
-<h1>{members.join(', ')}</h1>
+<h1>{members.join(", ")}</h1>
 <ul>
   {#each messages as msg}
     <li class="chat-item">
@@ -19,9 +19,7 @@
   <label>
     <input bind:value={msg} name="message" placeholder="message" />
   </label>
-  <button type="submit" disabled={msg == ''}>
-    Send
-  </button>
+  <button type="submit" disabled={msg == ""}> Send </button>
 </form>
 
 <style>
@@ -32,5 +30,13 @@
   }
   .chat-item:hover {
     background: #f3f3f3;
+  }
+  button {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background-color: #800000;
+    color: white;
+    border: none;
+    cursor: pointer;
   }
 </style>

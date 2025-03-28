@@ -63,3 +63,28 @@ export async function getHashedPassword(username) {
   
   return hashedPassword;
 }
+
+export async function createChat(members) {
+  const pool = await sql.connect(config);
+  const result = await pool.request()
+      .execute("createChat");
+  const chatId = result.returnValue;
+
+  for (const member of members) {
+    await pool.request()
+      .input("username", sql.VarChar(50), member)
+      .input("chat_id", sql.Int, chatId)
+      .execute("addChatMember");
+  }
+  
+  return chatId;
+}
+
+export async function addChatMember(username, chatId) {
+  const pool = await sql.connect(config);
+  const result = await pool.request()
+      .input("username", sql.VarChar(50), username)
+      .input("chat_id", sql.Int, chatId)
+      .execute("createChat");
+  return result.returnValue;
+}
