@@ -1,8 +1,8 @@
 import sql from "mssql"; 
 
 const config = {
-  user: "USERNAME",
-  password: "PASS",
+  user: "",
+  password: "",
   server: "490chatguard.csse.rose-hulman.edu",
   database: "490chatguard",
   options: {
@@ -30,9 +30,9 @@ export async function getMessages(chatId) {
 export async function addMessage(chatId, username, content) {
   const pool = await sql.connect(config);
   await pool.request()
-    .input("ChatId", sql.Int, chatId)
+    .input("chat_id", sql.Int, chatId)
     .input("username", sql.VarChar(50), username)
-    .input("Content", sql.NVarChar, content)
+    .input("text", sql.VarChar(50), content)
     .execute("createChatPost"); 
 }
 
