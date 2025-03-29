@@ -30,11 +30,19 @@ declare module '$lib/server/database.js' {
     chatId: number
   ): Promise<Message[]>;
 
+  export function getBoardMessages(
+  ): Promise<Message[]>;
+
   /**
    * Adds a new message to a chat.
    */
   export function addMessage(
     chatId: number,
+    username: string,
+    content: string
+  ): Promise<ResultSetHeader>;
+
+  export function addPublicMessage(
     username: string,
     content: string
   ): Promise<ResultSetHeader>;

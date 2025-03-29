@@ -1,8 +1,8 @@
 import sql from "mssql"; 
 
 const config = {
-  user: "",
-  password: "",
+  user: "USER",
+  password: "PASS",
   server: "490chatguard.csse.rose-hulman.edu",
   database: "490chatguard",
   options: {
@@ -10,6 +10,21 @@ const config = {
     trustServerCertificate: true,
   }
 };
+
+export async function getBoardMessages() {
+  const pool = await sql.connect(config);
+  const result = await pool.request()
+    .execute("getBoardMessages"); 
+  return result.recordset;
+}
+
+export async function addPublicMessage(username, content) {
+  const pool = await sql.connect(config);
+  await pool.request()
+    .input("username", sql.VarChar(50), username)
+    .input("text", sql.VarChar(50), content)
+    .execute("createPublicPost"); 
+}
 
 export async function getChatsForUser(username) {
   const pool = await sql.connect(config);

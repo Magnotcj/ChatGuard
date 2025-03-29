@@ -16,6 +16,9 @@
     <button formaction="/chats" type="submit" disabled={creating}>
       {creating ? "Saving..." : "Chats"}
     </button>
+    <button formaction="/board" type="submit" disabled={creating}>
+      {creating ? "Saving..." : "Public"}
+    </button>
   </form>
 </div>
 
