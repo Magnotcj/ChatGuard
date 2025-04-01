@@ -1,22 +1,9 @@
 <script>
     export let messages;
     
-    let newMessage = "";
+    let message = "";
     let userId = 1; // Get this from authentication if needed
     
-    async function sendMessage() {
-      if (!newMessage.trim()) return;
-      
-      // Sending message to the public board
-      await fetch("/message-board/post-message", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, content: newMessage })
-      });
-    
-      newMessage = "";
-      location.reload(); // Refresh messages, consider using stores for better performance
-    }
   </script>
   
   <h1>Public Message Board</h1>
@@ -29,10 +16,12 @@
     {/each}
   </div>
   
-  <div class="input-container">
-    <input bind:value={newMessage} placeholder="Type a message..." />
-    <button on:click={sendMessage}>Post</button>
-  </div>
+  <form method="POST" action="?/postMessage">
+    <label>
+      <input bind:value={message} name="message" placeholder="message" />
+    </label>
+    <button type="submit" disabled={message == ""}> Send </button>
+  </form>
   
   <style>
     .messages {
