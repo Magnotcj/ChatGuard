@@ -1,5 +1,6 @@
 <script>
-    export let messages;
+    export let data;
+    const { messages } = data;
     
     let message = "";
     let userId = 1; // Get this from authentication if needed
@@ -10,8 +11,8 @@
   <div class="messages">
     {#each messages as message}
       <div class="message">
-        <strong>{message.userName}</strong>
-        <p>{message.content}</p>
+        <strong>{message.user}</strong>
+        <p>{message.text}</p>
       </div>
     {/each}
   </div>
