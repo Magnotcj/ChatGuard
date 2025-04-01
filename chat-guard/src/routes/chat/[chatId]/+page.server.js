@@ -37,5 +37,11 @@ export const actions = {
       console.error('Database error:', error);
       return fail(500, { error: 'Failed to add message.' });
     }
+  },
+  submitReport: async ({ request }) => {
+    const formData = new URLSearchParams(await request.text());
+    const msgId = formData.get('msgId');
+    const reportText = formData.get('reportText');
+    console.log(msgId, reportText);
   }
 }

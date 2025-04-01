@@ -62,12 +62,13 @@ Begin
 		RETURN (1)
 	END
 
-	SELECT msg.text, msg.time, p.username
+	SELECT msg.id as [id], msg.text as [text], msg.time as [time], p.username as [user]
     FROM Chat as ch join chatcontainsmessage as ccm on ch.id = ccm.chat_id
-		join MESSAGE as msg on ccm.message_id = msg.id
+		join [MESSAGE] as msg on ccm.message_id = msg.id
 		join usersentmessage as usm on usm.message_id = msg.id
 		join PERSON as p on usm.user_username = p.username
     WHERE ch.id = @chat_id
+	ORDER BY [time] ASC
 
 	RETURN(0)
 End
@@ -171,6 +172,21 @@ Begin
 
 	INSERT INTO userpartofchat(chat_id, user_username)
 	VALUES (@chat_id, @username)
+
+	RETURN(0)
+End
+
+CREATE OR ALTER PROCEDURE [getBoardMessages]
+AS
+Begin
+
+	SELECT msg.id as [id], msg.text as [text], msg.time as [time], p.username as [user]
+    FROM messageboardhasmessage as mbm 
+		join [MESSAGE] as msg on mbm.message_id = msg.id
+		join usersentmessage as usm on usm.message_id = msg.id
+		join PERSON as p on usm.user_username = p.username
+   
+	ORDER BY [time] ASC
 
 	RETURN(0)
 End
