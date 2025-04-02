@@ -11,6 +11,7 @@
   }
 </script>
 
+<button on:click={() => goto('/dashboard')} id="backBtn">Back</button>
 <h1>Your Chats</h1>
 <form>
   <button on:click={() => openModal = true}> New Chat </button>
@@ -22,6 +23,7 @@
     </li>
   {/each}
 </ul>
+
 
 {#if openModal}
 <div class="modal">

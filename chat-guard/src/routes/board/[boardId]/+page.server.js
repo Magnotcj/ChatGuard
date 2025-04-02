@@ -1,16 +1,12 @@
 import { fail } from '@sveltejs/kit';
-import { getMessages, addMessage, getChatMembers, addReport } from "$lib/server/database";
+import { getBoardMessages, getBoardHeader, addBoardMessage, addReport } from "$lib/server/database";
 
 export async function load({ params }) {
-  const chatId = params.chatId;
-  const messages = await getMessages(chatId); // Calls stored procedure
-  const membersDb = await getChatMembers(chatId);
-  let members = [];
-  for (let i = 0; i < membersDb.length; i++) {
-    members.push(membersDb[i].user_username);
-  }
+  const boardId = params.boardId;
+  const messages = await getBoardMessages(boardId); // Calls stored procedure
+  const headerMsg = await getBoardHeader(boardId)
   
-  return { chatId, messages, members };
+  return { boardId, messages, headerMsg };
 }
 
 export const actions = {
@@ -18,7 +14,7 @@ export const actions = {
     const formData = new URLSearchParams(await request.text());
     const message = formData.get('message');
     const username = cookies.get('session_id') || "";
-    const chatId = url.pathname.split('/').pop();
+    const boardId = url.pathname.split('/').pop();
 
     // Validate required fields
     if (!message) {
@@ -27,12 +23,12 @@ export const actions = {
     if (!username) {
       return fail(400, { error: 'User is not logged in.' });
     }
-    if (!chatId) {
-      return fail(400, { error: 'Chat ID was not saved.' });
+    if (!boardId) {
+      return fail(400, { error: 'Board ID was not saved.' });
     }
 
     try {
-      await addMessage(chatId, username, message);
+      await addBoardMessage(boardId, username, message);
     } catch (error) {
       console.error('Database error:', error);
       return fail(500, { error: 'Failed to add message.' });

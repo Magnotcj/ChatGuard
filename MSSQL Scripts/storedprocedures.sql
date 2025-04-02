@@ -176,7 +176,9 @@ Begin
 	RETURN(0)
 End
 
-CREATE OR ALTER PROCEDURE [getBoardMessages]
+CREATE OR ALTER PROCEDURE [getBoardMessages](
+	@messageboard_id int
+)
 AS
 Begin
 
@@ -185,8 +187,99 @@ Begin
 		join [MESSAGE] as msg on mbm.message_id = msg.id
 		join usersentmessage as usm on usm.message_id = msg.id
 		join PERSON as p on usm.user_username = p.username
-   
+   	WHERE mbm.messageboard_id = @messageboard_id
 	ORDER BY [time] ASC
+
+	RETURN(0)
+End
+
+CREATE OR ALTER PROCEDURE [createPublicPost](
+	@username varchar(50),
+	@text varchar(255)
+)
+AS
+Begin
+	if not exists (SELECT * FROM PERSON WHERE username = @username)
+	BEGIN
+        PRINT 'User with username does not exist.';
+	    RETURN(1)
+	END
+	if @text is null or @text = ''
+	BEGIN
+		Print 'text cannot be null or empty.';
+		RETURN (3)
+	END
+
+	INSERT INTO MESSAGE(text, time)
+	VALUES (@text, GETDATE())
+
+	DECLARE @msg_id int = @@IDENTITY
+
+	INSERT INTO messageboardhasmessage(message_id)
+	VALUES (@msg_id)
+
+	INSERT INTO usersentmessage(message_id, user_username)
+	VALUES (@msg_id, @username)
+
+	RETURN(0)
+End
+
+CREATE OR ALTER PROCEDURE [createMessageBoard](
+	@username varchar(50),
+	@text varchar(255)
+)
+AS
+Begin
+	if not exists (SELECT * FROM PERSON WHERE username = @username)
+	BEGIN
+        PRINT 'User with username does not exist.';
+	    RETURN(1)
+	END
+	if @text is null or @text = ''
+	BEGIN
+		Print 'text cannot be null or empty.';
+		RETURN (3)
+	END
+
+	INSERT INTO MESSAGE(text, time)
+	VALUES (@text, GETDATE())
+
+	DECLARE @msg_id int = @@IDENTITY
+
+	INSERT INTO [MESSAGEBOARD](header_message_id)
+	VALUES (@msg_id)
+
+	INSERT INTO usersentmessage(message_id, user_username)
+	VALUES (@msg_id, @username)
+
+	RETURN(0)
+End
+
+CREATE OR ALTER PROCEDURE [getMessageBoards]
+AS
+Begin
+
+	SELECT mb.id as [id], msg.text as [text], msg.time as [time], usm.user_username as [user]
+    FROM [MESSAGEBOARD] as mb 
+		join [MESSAGE] as msg on mb.header_message_id = msg.id
+		join usersentmessage as usm on usm.message_id = msg.id
+   
+	ORDER BY [time] DESC
+
+	RETURN(0)
+End
+
+CREATE OR ALTER PROCEDURE [getBoardHeader](
+	@messageboard_id int
+)
+AS
+Begin
+
+	SELECT msg.id as [id], msg.text as [text], msg.time as [time], usm.user_username as [user]
+    FROM [MESSAGEBOARD] as mb
+		join [MESSAGE] as msg on mb.header_message_id = msg.id
+		join usersentmessage as usm on msg.id = usm.message_id
+	WHERE mb.id = @messageboard_id
 
 	RETURN(0)
 End

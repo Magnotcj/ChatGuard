@@ -14,7 +14,9 @@ CREATE TABLE PERSON (
 );
 
 CREATE TABLE MESSAGEBOARD (
-    id INT PRIMARY KEY IDENTITY(1,1)
+    id INT PRIMARY KEY IDENTITY(1,1),
+    header_message_id INT,
+    FOREIGN KEY (header_message_id) REFERENCES MESSAGE(id)
 );
 
 CREATE TABLE userpartofchat (
@@ -47,4 +49,13 @@ CREATE TABLE messageboardhasmessage (
     PRIMARY KEY (message_id, messageboard_id), -- Fixed the incorrect column reference
     FOREIGN KEY (message_id) REFERENCES MESSAGE(id),
     FOREIGN KEY (messageboard_id) REFERENCES MESSAGEBOARD(id)
+);
+
+CREATE TABLE ReportResponse (
+    id INT,
+    report_id INT,
+    text VARCHAR(255),
+    time DATETIME,
+    PRIMARY KEY (id),
+    FOREIGN KEY (report_id) REFERENCES Report(id)
 );

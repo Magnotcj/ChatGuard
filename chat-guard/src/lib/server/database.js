@@ -1,8 +1,8 @@
 import sql from "mssql"; 
 
 const config = {
-  user: "USER",
-  password: "PASS",
+  user: "",
+  password: "",
   server: "490chatguard.csse.rose-hulman.edu",
   database: "490chatguard",
   options: {
@@ -11,19 +11,44 @@ const config = {
   }
 };
 
-export async function getBoardMessages() {
+export async function getMessageBoards() {
   const pool = await sql.connect(config);
   const result = await pool.request()
+    .execute("getMessageBoards"); 
+  return result.recordset;
+}
+
+export async function getBoardMessages(boardId) {
+  const pool = await sql.connect(config);
+  const result = await pool.request()
+    .input("messageboard_id", sql.Int, boardId)
     .execute("getBoardMessages"); 
   return result.recordset;
 }
 
-export async function addPublicMessage(username, content) {
+export async function getBoardHeader(boardId) {
+  const pool = await sql.connect(config);
+  const result = await pool.request()
+    .input("messageboard_id", sql.Int, boardId)
+    .execute("getBoardHeader");
+  return result.recordset;
+}
+
+export async function addBoardMessage(boardId, username, content) {
   const pool = await sql.connect(config);
   await pool.request()
     .input("username", sql.VarChar(50), username)
-    .input("text", sql.VarChar(50), content)
+    .input("messageboard_id", sql.Int, boardId)
+    .input("text", sql.VarChar(255), content)
     .execute("createPublicPost"); 
+}
+
+export async function addMessageBoard(username, content) {
+  const pool = await sql.connect(config);
+  await pool.request()
+    .input("username", sql.VarChar(50), username)
+    .input("text", sql.VarChar(255), content)
+    .execute("createMessageBoard"); 
 }
 
 export async function getChatsForUser(username) {
@@ -102,4 +127,13 @@ export async function addChatMember(username, chatId) {
       .input("chat_id", sql.Int, chatId)
       .execute("createChat");
   return result.returnValue;
+}
+
+export async function addReport(username, msgId, reportText) {
+  const pool = await sql.connect(config);
+  const result = await pool.request()
+      .input("reporter_username", sql.VarChar(50), username)
+      .input("msg_id", sql.Int, msgId)
+      .input("report_text", sql.VarChar(255), reportText)
+      .execute("addReport");
 }

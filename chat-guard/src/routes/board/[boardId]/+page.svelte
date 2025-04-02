@@ -1,6 +1,6 @@
 <script>
   export let data;
-  const { chatId, messages, members } = data;
+  const { boardId, messages, headerMsg } = data;
   import { goto } from "$app/navigation";
 
   let openModal = false;
@@ -15,8 +15,15 @@
   }
 </script>
 
-<button on:click={() => goto('/chats')} id="backBtn">Back</button>
-<h1>{members.join(", ")}</h1>
+<button on:click={() => goto('/boards')} id="backBtn">Back</button>
+<h1 on:click={() => openReport(headerMsg[0].id)} class="chat-item">{headerMsg[0].text}</h1>
+<h2>
+  {headerMsg[0].user} ({headerMsg[0].time.toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  })}, {headerMsg[0].time.toLocaleDateString("en-US")})
+</h2>
 
 <form method="POST" action="?/postMessage">
   <label>
@@ -53,6 +60,8 @@
   </div>
 </div>
 {/if}
+
+
 
 <style>
   .chat-item {

@@ -1,9 +1,9 @@
 import { fail } from '@sveltejs/kit';
-import { addPublicMessage, getBoardMessages } from "$lib/server/database";
+import { addMessageBoard, getMessageBoards } from "$lib/server/database";
 
 export async function load({ params }) {
-  const messages = await getBoardMessages(); 
-  return { messages };
+  const boards = await getMessageBoards(); 
+  return { boards };
 }
 
 export const actions = {
@@ -21,10 +21,10 @@ export const actions = {
     }
 
     try {
-      await addPublicMessage(username, message);
+      await addMessageBoard(username, message);
     } catch (error) {
       console.error('Database error:', error);
-      return fail(500, { error: 'Failed to add message.' });
+      return fail(500, { error: 'Failed to add message board.' });
     }
   }
 }

@@ -1,24 +1,19 @@
 <script>
   export let data;
-  const { messages } = data;
+  const { boards } = data;
+  import { goto } from "$app/navigation";
 
   let message = "";
   let userId = 1; // Get this from authentication if needed
+
+  function openBoard(boardId) {
+    goto(`/board/${boardId}`);
+  }
 </script>
 
+<button on:click={() => goto('/dashboard')} id="backBtn">Back</button>
 <h1>Public Message Board</h1>
-<div class="messages">
-  {#each messages as message}
-    <li class="chat-item">
-      {message.text} - <strong>{message.user}</strong>
-      ({message.time.toLocaleString("en-US", {
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      })}, {message.time.toLocaleDateString("en-US")})
-    </li>
-  {/each}
-</div>
+
 
 <form method="POST" action="?/postMessage">
   <label>
@@ -26,6 +21,19 @@
   </label>
   <button type="submit" disabled={message == ""}> Send </button>
 </form>
+
+<div class="messages">
+  {#each boards as board}
+    <li on:click={() => openBoard(board.id)} class="chat-item">
+      {board.text} - <strong>{board.user}</strong>
+      ({board.time.toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      })}, {board.time.toLocaleDateString("en-US")})
+    </li>
+  {/each}
+</div>
 
 <style>
   .chat-item {
@@ -53,7 +61,11 @@
     padding: 8px;
   }
   button {
-    padding: 8px;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background-color: #800000;
+    color: white;
+    border: none;
     cursor: pointer;
   }
 </style>
