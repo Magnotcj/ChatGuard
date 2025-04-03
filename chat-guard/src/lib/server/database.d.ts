@@ -16,6 +16,10 @@ export interface Message {
 }
 
 declare module '$lib/server/database.js' {
+  export function deletePerson(
+    username: string,
+  ): Promise<Chat[]>;
+
   /**
    * Retrieves chats for a specific user.
    */

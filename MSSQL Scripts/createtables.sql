@@ -51,6 +51,14 @@ CREATE TABLE messageboardhasmessage (
     FOREIGN KEY (messageboard_id) REFERENCES MESSAGEBOARD(id)
 );
 
+CREATE TABLE Report (
+id INT PRIMARY KEY IDENTITY(1,1),
+time datetime,
+    message_id INT,
+    reporter VARCHAR(50),
+);
+
+
 CREATE TABLE ReportResponse (
     id INT,
     report_id INT,

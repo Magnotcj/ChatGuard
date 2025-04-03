@@ -20,6 +20,11 @@
       {creating ? "Saving..." : "Public"}
     </button>
   </form>
+  <form method="POST" action="?/delete">
+    <button disabled={creating}>
+      Delete Account
+    </button>
+  </form>
 </div>
 
 <style>

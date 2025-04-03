@@ -10,6 +10,13 @@ const config = {
     trustServerCertificate: true,
   }
 };
+export async function deletePerson(username) {
+  const pool = await sql.connect(config);
+  const result = await pool.request()
+    .input("username", sql.VarChar(50), username)
+    .execute("DeletePersonByUsername"); 
+  return result.recordset;
+}
 
 export async function getMessageBoards() {
   const pool = await sql.connect(config);

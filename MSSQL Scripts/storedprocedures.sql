@@ -1,3 +1,64 @@
+CREATE OR ALTER PROCEDURE DeletePersonByUsername
+    @Username VARCHAR(50)
+AS
+BEGIN
+    -- Delete the row from the Person table where the username matches the passed parameter
+    DELETE FROM Person
+    WHERE username = @Username;
+
+    -- Optionally, you can check if any rows were deleted
+    IF @@ROWCOUNT = 0
+    BEGIN
+        PRINT 'No row found with the specified username.';
+    END
+    ELSE
+    BEGIN
+        PRINT 'Row successfully deleted.';
+    END
+END;
+
+CREATE OR ALTER PROCEDURE [getMessageMaker](
+	@msg_id int
+)
+AS
+Begin
+	if @msg_id is null
+	BEGIN
+		Print 'msg_id cannot be null';
+		RETURN (1)
+	END
+SELECT user_username FROM usersentmessage as usm where usm.message_id = @msg_id
+RETURN(0)
+END
+
+
+CREATE PROCEDURE [addReport](
+	@reporter_username VARCHAR(50),
+	@msg_id int
+)
+AS
+Begin
+	if @reporter_username is null
+	BEGIN
+		Print 'reporter_username cannot be null';
+		RETURN (1)
+	END
+
+	if @msg_id is null
+	BEGIN
+		Print 'msg_id cannot be null';
+		RETURN (1)
+	END
+
+	if @msg_id is null
+	BEGIN
+		Print 'msg_id cannot be null';
+		RETURN (1)
+	END
+INSERT into Report(id, time, message_id, reporter)
+VALUES (@@IDENTITY, GETDATE(), @msg_id, @reporter_username)
+RETURN(0)
+END
 
 CREATE OR ALTER PROCEDURE [getPassHash]
 (
