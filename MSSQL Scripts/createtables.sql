@@ -52,10 +52,12 @@ CREATE TABLE messageboardhasmessage (
 );
 
 CREATE TABLE Report (
-id INT PRIMARY KEY IDENTITY(1,1),
-time datetime,
+    id INT PRIMARY KEY IDENTITY(1,1),
+    time datetime,
     message_id INT,
     reporter VARCHAR(50),
+    report_text VARCHAR(255),
+    FOREIGN KEY (reporter) REFERENCES PERSON(username) ON DELETE CASCADE
 );
 
 
@@ -65,5 +67,5 @@ CREATE TABLE ReportResponse (
     text VARCHAR(255),
     time DATETIME,
     PRIMARY KEY (id),
-    FOREIGN KEY (report_id) REFERENCES Report(id)
+    FOREIGN KEY (report_id) REFERENCES Report(id) ON DELETE CASCADE
 );
