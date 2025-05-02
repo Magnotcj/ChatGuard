@@ -13,6 +13,11 @@
   <h1>Welcome</h1>
   <br />
   <form>
+    <button formaction="/subscription" type="submit" disabled={creating}>
+      {creating ? "Saving..." : "Manage Subscription"}
+    </button>
+  </form>
+  <form>
     <button formaction="/chats" type="submit" disabled={creating}>
       {creating ? "Saving..." : "Chats"}
     </button>
