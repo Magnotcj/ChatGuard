@@ -2,11 +2,8 @@ CREATE OR ALTER PROCEDURE DeletePersonByUsername
     @Username VARCHAR(50)
 AS
 BEGIN
-    -- Delete the row from the Person table where the username matches the passed parameter
     DELETE FROM Person
     WHERE username = @Username;
-
-    -- Optionally, you can check if any rows were deleted
     IF @@ROWCOUNT = 0
     BEGIN
         PRINT 'No row found with the specified username.';
@@ -361,4 +358,26 @@ BEGIN
 
     INSERT INTO Subscription (subscription_type, renewal_date, user_username)
     VALUES (@SubscriptionType, DATEADD(YEAR, 1, GETDATE()), @Username);
+END;
+CREATE OR ALTER PROCEDURE DeleteSessionByUsername
+    @Username VARCHAR(50)
+AS
+BEGIN
+    DELETE FROM user_session WHERE username = @username
+    IF @@ROWCOUNT = 0
+    BEGIN
+        PRINT 'No row found with the specified username.';
+    END
+    ELSE
+    BEGIN
+        PRINT 'Row successfully deleted.';
+    END
+END;
+
+CREATE OR ALTER PROCEDURE GetSessionById
+    @id VARCHAR(255)
+AS
+BEGIN
+    SELECT user_session.id, user_session.username, user_session.expires_at, Person.username
+	FROM user_session INNER JOIN Person ON Person.username = user_session.username WHERE id = @id
 END;

@@ -76,3 +76,8 @@ CREATE TABLE Subscription (
     user_username VARCHAR(50),
     FOREIGN KEY (user_username) REFERENCES PERSON(username)
 );
+
+CREATE TABLE user_session (
+    username VARCHAR(50) NOT NULL PRIMARY KEY REFERENCES Person(username),
+    expires_at DATETIME NOT NULL
+);
