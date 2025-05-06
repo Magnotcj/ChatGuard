@@ -342,12 +342,14 @@ Begin
 	RETURN(0)
 End
 
-CREATE PROCEDURE AddPersonToSubscription
+ALTER PROCEDURE [dbo].[AddPersonToSubscription]
     @SubscriptionType INT,
     @Username VARCHAR(50)
 AS
 BEGIN
     SET NOCOUNT ON;
+
+    -- Check if the user exists in the PERSON table
     IF NOT EXISTS (
         SELECT 1 FROM PERSON WHERE username = @Username
     )
@@ -356,9 +358,14 @@ BEGIN
         RETURN (2);
     END
 
+    IF (@SubscriptionType = 2) 
     INSERT INTO Subscription (subscription_type, renewal_date, user_username)
-    VALUES (@SubscriptionType, DATEADD(YEAR, 1, GETDATE()), @Username);
+    VALUES (@SubscriptionType, DATEADD(MONTH, 1, GETDATE()), @Username);
+	IF (@SubscriptionType = 1) 
+	INSERT INTO Subscription (subscription_type, renewal_date, user_username)
+    VALUES (@SubscriptionType, DATEADD(WEEK, 1, GETDATE()), @Username);
 END;
+
 CREATE OR ALTER PROCEDURE DeleteSessionByUsername
     @Username VARCHAR(50)
 AS
@@ -380,4 +387,21 @@ AS
 BEGIN
     SELECT user_session.id, user_session.username, user_session.expires_at, Person.username
 	FROM user_session INNER JOIN Person ON Person.username = user_session.username WHERE id = @id
+END;
+
+CREATE OR ALTER PROCEDURE UpdateSessionById
+    @id VARCHAR(255),
+	@new_expires DATETIME
+AS
+BEGIN
+    UPDATE user_session SET expires_at = @new_expires WHERE id = @id
+END;
+
+CREATE OR ALTER PROCEDURE CreateSession
+    @id VARCHAR(255),
+	@username VARCHAR(50),
+	@expires DATETIME
+AS
+BEGIN
+    INSERT INTO user_session (id, username, expires_at) VALUES (@id, @username, @expires)
 END;

@@ -1,4 +1,6 @@
 <script>
+  import { enhance } from '$app/forms';
+  let subscriptionType = '0';
     let step = 'start'; // 'start' | 'loading' | 'success' | 'error'
   
     function fakePayPalPayment() {
@@ -15,6 +17,18 @@
       step = 'start';
     }
   </script>
+  <div class="centered">
+    <h2>Report Information</h2>
+	<form method="POST" action="?/create" use:enhance>
+      <label>
+        Select the type of subscription
+        <select name="subscriptionType" bind:value={subscriptionType} required>
+            <option value="1">Weekly</option>
+            <option value="2">Monthly</option>
+        </select>
+      </label>
+    </form>
+    </div>
   
   <div class="p-6 max-w-md mx-auto bg-white shadow-lg rounded-xl text-center">
     {#if step === 'start'}
