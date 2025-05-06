@@ -344,3 +344,21 @@ Begin
 
 	RETURN(0)
 End
+
+CREATE PROCEDURE AddPersonToSubscription
+    @SubscriptionType INT,
+    @Username VARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF NOT EXISTS (
+        SELECT 1 FROM PERSON WHERE username = @Username
+    )
+    BEGIN
+        PRINT('User does not exist in PERSON table.');
+        RETURN (2);
+    END
+
+    INSERT INTO Subscription (subscription_type, renewal_date, user_username)
+    VALUES (@SubscriptionType, DATEADD(YEAR, 1, GETDATE()), @Username);
+END;

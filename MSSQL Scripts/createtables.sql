@@ -69,3 +69,10 @@ CREATE TABLE ReportResponse (
     PRIMARY KEY (id),
     FOREIGN KEY (report_id) REFERENCES Report(id) ON DELETE CASCADE
 );
+
+CREATE TABLE Subscription (
+    subscription_type INT,
+	renewal_date datetime,
+    user_username VARCHAR(50),
+    FOREIGN KEY (user_username) REFERENCES PERSON(username)
+);
