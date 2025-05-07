@@ -78,6 +78,7 @@ CREATE TABLE Subscription (
 );
 
 CREATE TABLE user_session (
-    username VARCHAR(50) NOT NULL PRIMARY KEY REFERENCES Person(username),
+    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL REFERENCES Person(username) ON DELETE CASCADE,
     expires_at DATETIME NOT NULL
 );

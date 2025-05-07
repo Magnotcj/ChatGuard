@@ -1,9 +1,10 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { getChatsForUser, createChat, addChatMembers } from "$lib/server/database"; // Your database.js file
+import { getChatsForUser, createChat } from "$lib/server/database"; // Your database.js file
 
 export async function load({ cookies }) {
-  const userId = cookies.get("session_id") || ""; // Get user ID from authentication/session
-  const chatsDb = await getChatsForUser(userId); // Calls stored procedure
+  const sessionId = cookies.get('session_id') || "";
+
+  const chatsDb = await getChatsForUser(sessionId); // Calls stored procedure
 
   let chats = [];
   for (let i = 0; i < chatsDb.length;) {
@@ -24,6 +25,8 @@ export async function load({ cookies }) {
 
 export const actions = {
   createChat: async ({ request, cookies, url }) => {
+    const sessionId = cookies.get('session_id') || "";
+
     const formData = new URLSearchParams(await request.text());
     const memberStr = formData.get('members') || "";
     const members = memberStr.split(' ').join('').split(',');
@@ -38,7 +41,7 @@ export const actions = {
 
     let chatId;
     try {
-      chatId = await createChat(members);
+      chatId = await createChat(members, sessionId);
     } catch (error) {
       console.error('Database error:', error);
       return fail(500, { error: 'Failed to add message.' });

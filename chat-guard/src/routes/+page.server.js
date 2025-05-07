@@ -3,6 +3,7 @@ import { createUser, getHashedPassword } from '$lib/server/database.js'; // Ensu
 import bcrypt from 'bcrypt'; // Hashing library
 import { dev } from '$app/environment';
 import { showModal } from './store.js'; 
+import { generateSessionToken, createSession } from "../lib/server/session"
 
 /** @type {import('./$types').PageServerLoad} */
 export function load({ cookies }) {
@@ -49,13 +50,15 @@ export const actions = {
 
       // Save the username and hashed password to the database
       await createUser(username, hashedPassword);
-      cookies.set('session_id', username, {
-        path: '/',
-        httpOnly: true,
-        sameSite: 'strict',
-        secure: !dev,
+      // const token = generateSessionToken();
+      // const session = await createSession(token, username);
+      // cookies.set('session_id', token, {
+      //   path: '/',
+      //   httpOnly: true,
+      //   sameSite: 'strict',
+      //   secure: !dev,
       
-      });
+      // });
       showModal.set(true);
       return { success: true, message: 'Account created successfully' };
     } catch (error) {
@@ -87,12 +90,14 @@ export const actions = {
         return fail(401, { error: 'Invalid username or password.' });
       } 
       isTrue = true;
-      cookies.set('session_id', username, {
+
+      const token = generateSessionToken();
+      const session = await createSession(token, username);
+      cookies.set('session_id', token, {
         path: '/',
         httpOnly: true,
         sameSite: 'strict',
         secure: !dev,
-      
       });
     } catch (error) {
       console.error('Login error:', error);

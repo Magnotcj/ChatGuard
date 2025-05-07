@@ -9,6 +9,9 @@
 </svelte:head>
 
 <nav class="navbar navbar-dark"></nav>
+<form method="POST" action="?/logout">
+  <button> Logout </button>
+</form>
 <div class="centered">
   <h1>Welcome</h1>
   <br />
@@ -26,9 +29,7 @@
     </button>
   </form>
   <form method="POST" action="?/delete">
-    <button disabled={creating}>
-      Delete Account
-    </button>
+    <button disabled={creating}> Delete Account </button>
   </form>
 </div>
 
