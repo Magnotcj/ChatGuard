@@ -65,4 +65,5 @@ declare module '$lib/server/database.js' {
   export function getHashedPassword(
     username: string
   ): Promise<boolean>;
+
 }

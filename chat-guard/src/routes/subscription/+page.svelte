@@ -18,7 +18,7 @@
     }
   </script>
   <div class="centered">
-    <h2>Report Information</h2>
+    <h2>Subscription</h2>
 	<form method="POST" action="?/create" use:enhance>
       <label>
         Select the type of subscription
@@ -27,6 +27,7 @@
             <option value="2">Monthly</option>
         </select>
       </label>
+      <button type="submit">Update</button>
     </form>
     </div>
   

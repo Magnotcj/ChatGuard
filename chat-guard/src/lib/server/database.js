@@ -239,3 +239,17 @@ export async function addReport(msgId, reportText, sessionToken) {
     throw redirect(308, '/');
   }
 }
+
+export async function addPersonToSubscription(subscriptionType, sessionToken) {
+  try {
+    const username = await validateToken(sessionToken);
+    console.log('username: ', username);
+    const pool = await sql.connect(config);
+    await pool.request()
+        .input("SubscriptionType", sql.Int, subscriptionType)
+        .input("Username", sql.VarChar(50), username)
+        .execute("AddPersonToSubscription");
+  } catch (error) {
+    throw redirect(308, '/');
+  }
+}

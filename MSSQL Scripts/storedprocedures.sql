@@ -348,8 +348,6 @@ ALTER PROCEDURE [dbo].[AddPersonToSubscription]
 AS
 BEGIN
     SET NOCOUNT ON;
-
-    -- Check if the user exists in the PERSON table
     IF NOT EXISTS (
         SELECT 1 FROM PERSON WHERE username = @Username
     )
@@ -358,12 +356,34 @@ BEGIN
         RETURN (2);
     END
 
-    IF (@SubscriptionType = 2) 
-    INSERT INTO Subscription (subscription_type, renewal_date, user_username)
-    VALUES (@SubscriptionType, DATEADD(MONTH, 1, GETDATE()), @Username);
-	IF (@SubscriptionType = 1) 
-	INSERT INTO Subscription (subscription_type, renewal_date, user_username)
-    VALUES (@SubscriptionType, DATEADD(WEEK, 1, GETDATE()), @Username);
+    DECLARE @NewRenewalDate DATETIME;
+
+    IF @SubscriptionType = 2
+        SET @NewRenewalDate = DATEADD(MONTH, 1, GETDATE());
+    ELSE IF @SubscriptionType = 1
+        SET @NewRenewalDate = DATEADD(WEEK, 1, GETDATE());
+    ELSE
+    BEGIN
+        PRINT('Invalid subscription type.');
+        RETURN (3);
+    END
+
+    IF EXISTS (
+        SELECT 1 FROM Subscription WHERE user_username = @Username
+    )
+    BEGIN
+        -- update subscription
+        UPDATE Subscription
+        SET subscription_type = @SubscriptionType,
+            renewal_date = @NewRenewalDate
+        WHERE user_username = @Username;
+    END
+    ELSE
+    BEGIN
+        -- new subscription
+        INSERT INTO Subscription (subscription_type, renewal_date, user_username)
+        VALUES (@SubscriptionType, @NewRenewalDate, @Username);
+    END
 END;
 
 CREATE OR ALTER PROCEDURE DeleteSessionByUsername
