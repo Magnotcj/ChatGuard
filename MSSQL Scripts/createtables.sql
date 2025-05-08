@@ -74,7 +74,8 @@ CREATE TABLE Subscription (
     subscription_type INT,
 	renewal_date datetime,
     user_username VARCHAR(50),
-    FOREIGN KEY (user_username) REFERENCES PERSON(username)
+    PRIMARY KEY (user_username),
+    FOREIGN KEY (user_username) REFERENCES PERSON(username) ON DELETE CASCADE
 );
 
 CREATE TABLE user_session (

@@ -51,6 +51,13 @@
       </button>
     {/if}
   </div>
+
+  <div class="centered">
+    <h2>Cancel Subscription</h2>
+    <form method="POST" action="?/cancel" use:enhance>
+      <button type="submit">Cancel Subscription</button>
+    </form>
+  </div>
   
   <style>
     /* Optional styling for demo purposes */

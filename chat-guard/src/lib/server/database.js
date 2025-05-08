@@ -174,7 +174,7 @@ export async function createUser(username, password) {
       .input("username", sql.VarChar(50), username)
       .input("PasswordHash", sql.NVarChar, password)
       .execute("createUser");
-    return result; // TODO: return if creation was successful
+    return result;
 }
 
 export async function getHashedPassword(username) {
@@ -243,7 +243,6 @@ export async function addReport(msgId, reportText, sessionToken) {
 export async function addPersonToSubscription(subscriptionType, sessionToken) {
   try {
     const username = await validateToken(sessionToken);
-    console.log('username: ', username);
     const pool = await sql.connect(config);
     await pool.request()
         .input("SubscriptionType", sql.Int, subscriptionType)

@@ -362,6 +362,15 @@ BEGIN
         SET @NewRenewalDate = DATEADD(MONTH, 1, GETDATE());
     ELSE IF @SubscriptionType = 1
         SET @NewRenewalDate = DATEADD(WEEK, 1, GETDATE());
+	ELSE IF @SubscriptionType = 0
+	BEGIN
+		-- Set existing subscription to be cancelled
+		UPDATE Subscription
+        SET subscription_type = @SubscriptionType
+        WHERE user_username = @Username;
+
+		RETURN (0)
+	END
     ELSE
     BEGIN
         PRINT('Invalid subscription type.');
@@ -424,4 +433,24 @@ CREATE OR ALTER PROCEDURE CreateSession
 AS
 BEGIN
     INSERT INTO user_session (id, username, expires_at) VALUES (@id, @username, @expires)
+END;
+
+CREATE PROCEDURE deleteExpiredAccounts AS
+BEGIN
+	DECLARE @user VARCHAR(50)
+
+	DECLARE curs CURSOR FORWARD_ONLY
+	FOR SELECT user_username
+		FROM Subscription
+		WHERE subscription_type = 0 AND renewal_date < GETDATE()
+
+	OPEN curs
+	FETCH NEXT FROM curs INTO @user
+	WHILE @@FETCH_STATUS = 0 BEGIN
+		EXEC DeletePersonByUsername @Username = @user
+		FETCH NEXT FROM curs INTO @user
+	END
+
+	CLOSE curs
+	DEALLOCATE curs
 END;
