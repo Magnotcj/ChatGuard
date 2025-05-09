@@ -51,7 +51,9 @@
         </button>
 		
 	</form>
-
+	<a href='https://docs.google.com/document/d/1OSOZiAH3Wd2-iuRVmsZMMHUwBezOOmiEyMSOqa72VoQ/edit?usp=sharing'> 
+		<h3>Privacy Policy</h3>
+		</a>
     <!-- Success Modal -->
 	{#if form?.success}
 	<div class="modal">
