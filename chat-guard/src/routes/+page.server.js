@@ -1,22 +1,41 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { createUser, getHashedPassword } from '$lib/server/database.js'; // Ensure this function exists and works as expected
+import { createUser, getHashedPassword, validateToken } from '$lib/server/database.js'; // Ensure this function exists and works as expected
 import bcrypt from 'bcrypt'; // Hashing library
 import { dev } from '$app/environment';
 import { showModal } from './store.js'; 
 import { generateSessionToken, createSession } from "../lib/server/session"
 
 /** @type {import('./$types').PageServerLoad} */
-export function load({ cookies }) {
+export async function load({ cookies }) {
   const id = cookies.get("session_id");
-  if(id == undefined) {
-  cookies.set('session_id', '', {
-    path: '/',
-    httpOnly: true,
-    sameSite: 'strict',
-    secure: !dev,
-  
-  });
-}
+
+  if (id == undefined) {
+    cookies.set('session_id', '', {
+          path: '/',
+          httpOnly: true,
+          sameSite: 'strict',
+          secure: !dev,
+        
+    });
+    return;
+  }
+  if (id == '') {
+    return;
+  }
+
+  try {
+      await validateToken(id);
+  } catch (error) {
+    cookies.set('session_id', '', {
+          path: '/',
+          httpOnly: true,
+          sameSite: 'strict',
+          secure: !dev,
+        
+    });
+    return;
+  }
+  throw redirect(308, '/dashboard');
 }
 
 async function hashPassword(password) {

@@ -1,5 +1,16 @@
-import { addPersonToSubscription } from '$lib/server/database.js';
+import { addPersonToSubscription, validateToken } from '$lib/server/database.js';
 import { fail, redirect } from '@sveltejs/kit';
+
+export async function load({ cookies }) {
+  const sessionId = cookies.get('session_id') || "";
+
+  try {
+	  await validateToken(sessionId);
+	} catch (error) {
+	  throw redirect(308, '/');
+	}
+}
+
 export const actions = {
     create: async ({ request, cookies }) => {
       const data = await request.formData();

@@ -3,8 +3,8 @@ import { validateSessionToken } from "../server/session"
 import { fail, redirect } from '@sveltejs/kit';
 
 const config = {
-  user: "dickinje",
-  password: "Natty#2024",
+  user: "",
+  password: "",
   server: "490chatguard.csse.rose-hulman.edu",
   database: "490chatguard",
   options: {
@@ -13,7 +13,7 @@ const config = {
   }
 };
 
-async function validateToken(token) {
+export async function validateToken(token) {
   const result = await validateSessionToken(token);
   if (result.session === null) {
     throw new Error('Failed to validate token.');
